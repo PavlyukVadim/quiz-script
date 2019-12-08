@@ -251,3 +251,5 @@ function parse(input) {
     return maybeCall(maybeBinary(parseAtom(), 0))
   }
 }
+
+export default parse

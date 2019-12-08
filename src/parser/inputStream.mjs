@@ -27,3 +27,5 @@ function InputStream(input) {
     croak,
   }
 }
+
+export default InputStream

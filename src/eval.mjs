@@ -41,35 +41,35 @@ class Environment {
   }
 }
 
-Environment.prototype = {
-  lookup: function(name) {
-    let scope = this
-    while (scope) {
-      if (Object.prototype.hasOwnProperty.call(scope.vars, name)) {
-        return scope
-      }
-      scope = scope.parent
-    }
-  },
-  getVarValue: function(name) {
-    if (name in this.vars) {
-      return this.vars[name]
-      // TODO: refactor
-    } else if (this.parent && name in this.parent.vars) {
-      return this.parent.vars[name]
-    } else if (name in globalVars) {
-      return globalVars[name]
-    }
-    throw new Error("Undefined variable " + name)
-  },
-  setVarValue: function(name, value) {
-    const scope = this.lookup(name)
-    if (!scope && this.parent) {
-      throw new Error("Undefined variable " + name)
-    }
-    return (scope || this).vars[name] = value
-  },
-}
+// Environment.prototype = {
+//   lookup: function(name) {
+//     let scope = this
+//     while (scope) {
+//       if (Object.prototype.hasOwnProperty.call(scope.vars, name)) {
+//         return scope
+//       }
+//       scope = scope.parent
+//     }
+//   },
+//   getVarValue: function(name) {
+//     if (name in this.vars) {
+//       return this.vars[name]
+//       // TODO: refactor
+//     } else if (this.parent && name in this.parent.vars) {
+//       return this.parent.vars[name]
+//     } else if (name in globalVars) {
+//       return globalVars[name]
+//     }
+//     throw new Error("Undefined variable " + name)
+//   },
+//   setVarValue: function(name, value) {
+//     const scope = this.lookup(name)
+//     if (!scope && this.parent) {
+//       throw new Error("Undefined variable " + name)
+//     }
+//     return (scope || this).vars[name] = value
+//   },
+// }
 
   // name  // key                             // identifier
 const expTypes = {
@@ -91,7 +91,7 @@ const varTypes = [
   'var' // member var for objLiteral
 ]
 
-function evaluate(exp, env) {
+export const evaluate = (exp, env) => {
   switch (exp.type) {
     case 'num':
     case 'str':
@@ -250,3 +250,5 @@ function testFactory(test) {
   })
   return test
 }
+
+export default Environment

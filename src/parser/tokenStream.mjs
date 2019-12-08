@@ -134,3 +134,5 @@ function TokenStream(input) {
     croak: input.croak
   }
 }
+
+export default TokenStream
