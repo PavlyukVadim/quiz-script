@@ -1,26 +1,7 @@
-function parse (input) {
-  const PRECEDENCE = {
-    '=': 1, // assign
-    ':': 1, // assign for props inside literals
-    '||': 2, // bool or
-    '&&': 3, // bool and
-    '<': 4, // les
-    '>': 4, // more
-    '<=': 4, // les or equal
-    '>=': 4, // more or equal
-    '==': 4, // equal
-    '!=': 4, // not equal
-    '+': 5, // plus
-    '-': 5, // minus
-    '*': 6, // multiple
-    '/': 6, // divide
-    '%': 6, // remaining from dividing
-    '->': 7, // access to props
-    as: 7 // forEach var identifier
-  }
+const { binaryOperatorPrecedence } = require('../config')
+const { compose } = require('../../utils')
 
-  return parseTopLevel()
-
+const parse = (input) => {
   function isPunc (ch) {
     const tok = input.peek()
     return (tok && (tok.type === 'punc') && (!ch || tok.value === ch))
@@ -51,10 +32,10 @@ function parse (input) {
     input.croak('Unexpected token: ' + JSON.stringify(input.peek()))
   }
 
-  function maybeBinary (left, myPrec) {
+  function maybeBinary (left, myPrec = 0) {
     const tok = input.peek()
     if (tok) {
-      const hisPrec = PRECEDENCE[tok.value]
+      const hisPrec = binaryOperatorPrecedence[tok.value]
       if (hisPrec > myPrec) {
         input.next()
         let type
@@ -247,9 +228,9 @@ function parse (input) {
     }
   }
 
-  function parseExpression () {
-    return maybeCall(maybeBinary(parseAtom(), 0))
-  }
+  const parseExpression = compose(maybeCall, maybeBinary, parseAtom)
+
+  return parseTopLevel()
 }
 
 module.exports = {

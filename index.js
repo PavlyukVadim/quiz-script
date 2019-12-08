@@ -1,17 +1,8 @@
-const InputStream = require('./src/parser/inputStream')
-const TokenStream = require('./src/parser/tokenStream')
+const { InputStream, TokenStream } = require('./src/parser/streams')
 const { parse } = require('./src/parser/index')
-const { Environment, evaluate } = require('./src/eval')
-
-const outputAstToConsole = (ast, code) => {
-  console.log('Code sample:\n', code)
-  console.log('AST:\n', ast)
-  console.log('AST:\n', JSON.stringify(ast, null, 2))
-}
-
-const outputEnv = (env) => {
-  console.log('env:\n', JSON.stringify(env, null, 2))
-}
+const Environment = require('./src/eval/environment')
+const evaluate = require('./src/eval')
+const { outputAstToConsole, outputEnv } = require('./utils/output')
 
 const testMembersExprCode = `
   test t = [
@@ -59,7 +50,7 @@ const testMembersExprCode = `
 const globalEnv = new Environment()
 
 const astOfTestMembersExprCode = parse(TokenStream(InputStream(testMembersExprCode)))
-outputAstToConsole(astOfTestMembersExprCode, testMembersExprCode)
+// outputAstToConsole(astOfTestMembersExprCode, testMembersExprCode)
 evaluate(astOfTestMembersExprCode, globalEnv)
-outputEnv(globalEnv)
-console.log('globalEnv', globalEnv)
+// outputEnv(globalEnv)
+// console.log('globalEnv', globalEnv)
