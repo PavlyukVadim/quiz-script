@@ -1,3 +1,11 @@
+const chai = require('chai')
+const InputStream = require('../src/parser/inputStream')
+const TokenStream = require('../src/parser/tokenStream')
+const { parse } = require('../src/parser/index')
+
+// import parse from './src/parser/index'
+// import Environment, { evaluate } from './src/eval'
+
 describe('AST tests', function() {
   it('testVariableAssignCode', function() {
 

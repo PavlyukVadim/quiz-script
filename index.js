@@ -1,7 +1,7 @@
-import InputStream from './src/parser/inputStream'
-import TokenStream from './src/parser/tokenStream'
-import parse from './src/parser/index'
-import Environment, { evaluate } from './src/eval'
+const InputStream = require('./src/parser/inputStream')
+const TokenStream = require('./src/parser/tokenStream')
+const { parse } = require('./src/parser/index')
+const { Environment, evaluate } = require('./src/eval')
 
 console.log('here')
 

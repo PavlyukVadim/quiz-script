@@ -91,7 +91,7 @@ const varTypes = [
   'var' // member var for objLiteral
 ]
 
-export const evaluate = (exp, env) => {
+const evaluate = (exp, env) => {
   switch (exp.type) {
     case 'num':
     case 'str':
@@ -251,4 +251,7 @@ function testFactory(test) {
   return test
 }
 
-export default Environment
+module.exports = {
+  Environment,
+  evaluate,
+}

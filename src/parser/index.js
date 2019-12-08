@@ -252,4 +252,6 @@ function parse(input) {
   }
 }
 
-export default parse
+module.exports = {
+  parse,
+}

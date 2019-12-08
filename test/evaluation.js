@@ -1,3 +1,9 @@
+const chai = require('chai')
+const InputStream = require('../src/parser/inputStream')
+const TokenStream = require('../src/parser/tokenStream')
+const { parse } = require('../src/parser/index')
+const { Environment, evaluate } = require('../src/eval')
+
 describe('Evaluation', function() {
   let globalEnv
   beforeEach(() => {
