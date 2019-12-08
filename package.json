@@ -1,0 +1,23 @@
+{
+  "name": "quiz-script",
+  "version": "1.0.0",
+  "description": "### Implementation of specific programming language for testing system",
+  "main": "example.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PavlyukVadim/quiz-script.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PavlyukVadim/quiz-script/issues"
+  },
+  "homepage": "https://github.com/PavlyukVadim/quiz-script#readme"
+}
