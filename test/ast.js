@@ -1,14 +1,12 @@
 const chai = require('chai')
-const InputStream = require('../src/parser/inputStream')
-const TokenStream = require('../src/parser/tokenStream')
+const { InputStream, TokenStream } = require('../src/parser/streams')
 const { parse } = require('../src/parser/index')
 
 // import parse from './src/parser/index'
 // import Environment, { evaluate } from './src/eval'
 
-describe('AST tests', function() {
-  it('testVariableAssignCode', function() {
-
+describe('AST tests', function () {
+  it('testVariableAssignCode', function () {
     const testVariableAssignCode = `
       test t = [
         title: "My first test",
@@ -16,28 +14,28 @@ describe('AST tests', function() {
     `
 
     const expectedResult = {
-      "type": "prog",
-      "prog": [
+      type: 'prog',
+      prog: [
         {
-          "type": "assignExpression",
-          "operator": "=",
-          "left": {
-            "type": "testVar",
-            "name": "t"
+          type: 'assignExpression',
+          operator: '=',
+          left: {
+            type: 'testVar',
+            name: 't'
           },
-          "right": {
-            "type": "objLiteral",
-            "properties": [
+          right: {
+            type: 'objLiteral',
+            properties: [
               {
-                "type": "literalAssignExpression",
-                "operator": ":",
-                "left": {
-                  "type": "var",
-                  "value": "title"
+                type: 'literalAssignExpression',
+                operator: ':',
+                left: {
+                  type: 'var',
+                  value: 'title'
                 },
-                "right": {
-                  "type": "str",
-                  "value": "My first test"
+                right: {
+                  type: 'str',
+                  value: 'My first test'
                 }
               }
             ]
@@ -52,7 +50,7 @@ describe('AST tests', function() {
       .to.deep.equal(expectedResult)
   })
 
-  it('questionVariableAssignCode', function() {
+  it('questionVariableAssignCode', function () {
     const questionVariableAssignCode = `
       question q1 = [
         description: "What's your name",
@@ -60,28 +58,28 @@ describe('AST tests', function() {
     `
 
     const expectedResult = {
-      "type": "prog",
-      "prog": [
+      type: 'prog',
+      prog: [
         {
-          "type": "assignExpression",
-          "operator": "=",
-          "left": {
-            "type": "questionVar",
-            "name": "q1"
+          type: 'assignExpression',
+          operator: '=',
+          left: {
+            type: 'questionVar',
+            name: 'q1'
           },
-          "right": {
-            "type": "objLiteral",
-            "properties": [
+          right: {
+            type: 'objLiteral',
+            properties: [
               {
-                "type": "literalAssignExpression",
-                "operator": ":",
-                "left": {
-                  "type": "var",
-                  "value": "description"
+                type: 'literalAssignExpression',
+                operator: ':',
+                left: {
+                  type: 'var',
+                  value: 'description'
                 },
-                "right": {
-                  "type": "str",
-                  "value": "What's your name"
+                right: {
+                  type: 'str',
+                  value: "What's your name"
                 }
               }
             ]
@@ -96,40 +94,39 @@ describe('AST tests', function() {
       .to.deep.equal(expectedResult)
   })
 
-
-  it('testMembersExprCode', function() {
+  it('testMembersExprCode', function () {
     const testMembersExprCode = `
       t->questions->add(q1)
     `
 
     const expectedResult = {
-      "type": "prog",
-      "prog": [
+      type: 'prog',
+      prog: [
         {
-          "type": "memberExpression",
-          "operator": "->",
-          "left": {
-            "type": "memberExpression",
-            "operator": "->",
-            "left": {
-              "type": "var",
-              "value": "t"
+          type: 'memberExpression',
+          operator: '->',
+          left: {
+            type: 'memberExpression',
+            operator: '->',
+            left: {
+              type: 'var',
+              value: 't'
             },
-            "right": {
-              "type": "var",
-              "value": "questions"
+            right: {
+              type: 'var',
+              value: 'questions'
             }
           },
-          "right": {
-            "type": "call",
-            "func": {
-              "type": "var",
-              "value": "add"
+          right: {
+            type: 'call',
+            func: {
+              type: 'var',
+              value: 'add'
             },
-            "args": [
+            args: [
               {
-                "type": "var",
-                "value": "q1"
+                type: 'var',
+                value: 'q1'
               }
             ]
           }
@@ -143,8 +140,7 @@ describe('AST tests', function() {
       .to.deep.equal(expectedResult)
   })
 
-
-  it('testMembersWithLiteralExprCode', function() {
+  it('testMembersWithLiteralExprCode', function () {
     const testMembersWithLiteralExprCode = `
       t->answers->add([
         id: 1,
@@ -154,67 +150,67 @@ describe('AST tests', function() {
     `
 
     const expectedResult = {
-      "type": "prog",
-      "prog": [
+      type: 'prog',
+      prog: [
         {
-          "type": "memberExpression",
-          "operator": "->",
-          "left": {
-            "type": "memberExpression",
-            "operator": "->",
-            "left": {
-              "type": "var",
-              "value": "t"
+          type: 'memberExpression',
+          operator: '->',
+          left: {
+            type: 'memberExpression',
+            operator: '->',
+            left: {
+              type: 'var',
+              value: 't'
             },
-            "right": {
-              "type": "var",
-              "value": "answers"
+            right: {
+              type: 'var',
+              value: 'answers'
             }
           },
-          "right": {
-            "type": "call",
-            "func": {
-              "type": "var",
-              "value": "add"
+          right: {
+            type: 'call',
+            func: {
+              type: 'var',
+              value: 'add'
             },
-            "args": [
+            args: [
               {
-                "type": "objLiteral",
-                "properties": [
+                type: 'objLiteral',
+                properties: [
                   {
-                    "type": "literalAssignExpression",
-                    "operator": ":",
-                    "left": {
-                      "type": "var",
-                      "value": "id"
+                    type: 'literalAssignExpression',
+                    operator: ':',
+                    left: {
+                      type: 'var',
+                      value: 'id'
                     },
-                    "right": {
-                      "type": "num",
-                      "value": 1
+                    right: {
+                      type: 'num',
+                      value: 1
                     }
                   },
                   {
-                    "type": "literalAssignExpression",
-                    "operator": ":",
-                    "left": {
-                      "type": "var",
-                      "value": "q1"
+                    type: 'literalAssignExpression',
+                    operator: ':',
+                    left: {
+                      type: 'var',
+                      value: 'q1'
                     },
-                    "right": {
-                      "type": "str",
-                      "value": "Vadim"
+                    right: {
+                      type: 'str',
+                      value: 'Vadim'
                     }
                   },
                   {
-                    "type": "literalAssignExpression",
-                    "operator": ":",
-                    "left": {
-                      "type": "var",
-                      "value": "q2"
+                    type: 'literalAssignExpression',
+                    operator: ':',
+                    left: {
+                      type: 'var',
+                      value: 'q2'
                     },
-                    "right": {
-                      "type": "str",
-                      "value": "21"
+                    right: {
+                      type: 'str',
+                      value: '21'
                     }
                   }
                 ]
@@ -231,8 +227,7 @@ describe('AST tests', function() {
       .to.deep.equal(expectedResult)
   })
 
-
-  it('condStatementSampleCode', function() {
+  it('condStatementSampleCode', function () {
     const condStatementSampleCode = `
       if (t->questions->amount > 2) {
         print("remove doesn\'t work")
@@ -240,48 +235,48 @@ describe('AST tests', function() {
     `
 
     const expectedResult = {
-      "type": "prog",
-      "prog": [
+      type: 'prog',
+      prog: [
         {
-          "type": "ifStatement",
-          "cond": {
-            "type": "binaryExpression",
-            "operator": ">",
-            "left": {
-              "type": "memberExpression",
-              "operator": "->",
-              "left": {
-                "type": "memberExpression",
-                "operator": "->",
-                "left": {
-                  "type": "var",
-                  "value": "t"
+          type: 'ifStatement',
+          cond: {
+            type: 'binaryExpression',
+            operator: '>',
+            left: {
+              type: 'memberExpression',
+              operator: '->',
+              left: {
+                type: 'memberExpression',
+                operator: '->',
+                left: {
+                  type: 'var',
+                  value: 't'
                 },
-                "right": {
-                  "type": "var",
-                  "value": "questions"
+                right: {
+                  type: 'var',
+                  value: 'questions'
                 }
               },
-              "right": {
-                "type": "var",
-                "value": "amount"
+              right: {
+                type: 'var',
+                value: 'amount'
               }
             },
-            "right": {
-              "type": "num",
-              "value": 2
+            right: {
+              type: 'num',
+              value: 2
             }
           },
-          "then": {
-            "type": "call",
-            "func": {
-              "type": "var",
-              "value": "print"
+          then: {
+            type: 'call',
+            func: {
+              type: 'var',
+              value: 'print'
             },
-            "args": [
+            args: [
               {
-                "type": "str",
-                "value": "remove doesn't work"
+                type: 'str',
+                value: "remove doesn't work"
               }
             ]
           }
@@ -295,8 +290,7 @@ describe('AST tests', function() {
       .to.deep.equal(expectedResult)
   })
 
-
-  it('forEachSampleCode', function() {
+  it('forEachSampleCode', function () {
     const forEachSampleCode = `
       forEach(t->questions as q) {
         print(q->description)
@@ -304,47 +298,47 @@ describe('AST tests', function() {
     `
 
     const expectedResult = {
-      "type": "prog",
-      "prog": [
+      type: 'prog',
+      prog: [
         {
-          "type": "forEachStatement",
-          "inner": {
-            "type": "identifierExpression",
-            "operator": "as",
-            "left": {
-              "type": "memberExpression",
-              "operator": "->",
-              "left": {
-                "type": "var",
-                "value": "t"
+          type: 'forEachStatement',
+          inner: {
+            type: 'identifierExpression',
+            operator: 'as',
+            left: {
+              type: 'memberExpression',
+              operator: '->',
+              left: {
+                type: 'var',
+                value: 't'
               },
-              "right": {
-                "type": "var",
-                "value": "questions"
+              right: {
+                type: 'var',
+                value: 'questions'
               }
             },
-            "right": {
-              "type": "var",
-              "value": "q"
+            right: {
+              type: 'var',
+              value: 'q'
             }
           },
-          "body": {
-            "type": "call",
-            "func": {
-              "type": "var",
-              "value": "print"
+          body: {
+            type: 'call',
+            func: {
+              type: 'var',
+              value: 'print'
             },
-            "args": [
+            args: [
               {
-                "type": "memberExpression",
-                "operator": "->",
-                "left": {
-                  "type": "var",
-                  "value": "q"
+                type: 'memberExpression',
+                operator: '->',
+                left: {
+                  type: 'var',
+                  value: 'q'
                 },
-                "right": {
-                  "type": "var",
-                  "value": "description"
+                right: {
+                  type: 'var',
+                  value: 'description'
                 }
               }
             ]
@@ -358,7 +352,6 @@ describe('AST tests', function() {
     chai.expect(astOfForEachSampleCode)
       .to.deep.equal(expectedResult)
   })
-
 
   it('fullCodeSample', function () {
     const fullCodeSample = `
@@ -409,314 +402,314 @@ describe('AST tests', function() {
   `
 
     const expectedResult = {
-      "type": "prog",
-      "prog": [
+      type: 'prog',
+      prog: [
         {
-          "type": "assignExpression",
-          "operator": "=",
-          "left": {
-            "type": "testVar",
-            "name": "t"
+          type: 'assignExpression',
+          operator: '=',
+          left: {
+            type: 'testVar',
+            name: 't'
           },
-          "right": {
-            "type": "objLiteral",
-            "properties": [
+          right: {
+            type: 'objLiteral',
+            properties: [
               {
-                "type": "literalAssignExpression",
-                "operator": ":",
-                "left": {
-                  "type": "var",
-                  "value": "title"
+                type: 'literalAssignExpression',
+                operator: ':',
+                left: {
+                  type: 'var',
+                  value: 'title'
                 },
-                "right": {
-                  "type": "str",
-                  "value": "My first test"
+                right: {
+                  type: 'str',
+                  value: 'My first test'
                 }
               }
             ]
           }
         },
         {
-          "type": "assignExpression",
-          "operator": "=",
-          "left": {
-            "type": "questionVar",
-            "name": "q1"
+          type: 'assignExpression',
+          operator: '=',
+          left: {
+            type: 'questionVar',
+            name: 'q1'
           },
-          "right": {
-            "type": "objLiteral",
-            "properties": [
+          right: {
+            type: 'objLiteral',
+            properties: [
               {
-                "type": "literalAssignExpression",
-                "operator": ":",
-                "left": {
-                  "type": "var",
-                  "value": "description"
+                type: 'literalAssignExpression',
+                operator: ':',
+                left: {
+                  type: 'var',
+                  value: 'description'
                 },
-                "right": {
-                  "type": "str",
-                  "value": "What's your name"
+                right: {
+                  type: 'str',
+                  value: "What's your name"
                 }
               }
             ]
           }
         },
         {
-          "type": "assignExpression",
-          "operator": "=",
-          "left": {
-            "type": "questionVar",
-            "name": "q2"
+          type: 'assignExpression',
+          operator: '=',
+          left: {
+            type: 'questionVar',
+            name: 'q2'
           },
-          "right": {
-            "type": "objLiteral",
-            "properties": [
+          right: {
+            type: 'objLiteral',
+            properties: [
               {
-                "type": "literalAssignExpression",
-                "operator": ":",
-                "left": {
-                  "type": "var",
-                  "value": "description"
+                type: 'literalAssignExpression',
+                operator: ':',
+                left: {
+                  type: 'var',
+                  value: 'description'
                 },
-                "right": {
-                  "type": "str",
-                  "value": "How old are you"
+                right: {
+                  type: 'str',
+                  value: 'How old are you'
                 }
               }
             ]
           }
         },
         {
-          "type": "assignExpression",
-          "operator": "=",
-          "left": {
-            "type": "questionVar",
-            "name": "q3"
+          type: 'assignExpression',
+          operator: '=',
+          left: {
+            type: 'questionVar',
+            name: 'q3'
           },
-          "right": {
-            "type": "objLiteral",
-            "properties": []
+          right: {
+            type: 'objLiteral',
+            properties: []
           }
         },
         {
-          "type": "memberExpression",
-          "operator": "->",
-          "left": {
-            "type": "memberExpression",
-            "operator": "->",
-            "left": {
-              "type": "var",
-              "value": "t"
+          type: 'memberExpression',
+          operator: '->',
+          left: {
+            type: 'memberExpression',
+            operator: '->',
+            left: {
+              type: 'var',
+              value: 't'
             },
-            "right": {
-              "type": "var",
-              "value": "questions"
+            right: {
+              type: 'var',
+              value: 'questions'
             }
           },
-          "right": {
-            "type": "call",
-            "func": {
-              "type": "var",
-              "value": "add"
+          right: {
+            type: 'call',
+            func: {
+              type: 'var',
+              value: 'add'
             },
-            "args": [
+            args: [
               {
-                "type": "var",
-                "value": "q1"
+                type: 'var',
+                value: 'q1'
               }
             ]
           }
         },
         {
-          "type": "memberExpression",
-          "operator": "->",
-          "left": {
-            "type": "memberExpression",
-            "operator": "->",
-            "left": {
-              "type": "var",
-              "value": "t"
+          type: 'memberExpression',
+          operator: '->',
+          left: {
+            type: 'memberExpression',
+            operator: '->',
+            left: {
+              type: 'var',
+              value: 't'
             },
-            "right": {
-              "type": "var",
-              "value": "questions"
+            right: {
+              type: 'var',
+              value: 'questions'
             }
           },
-          "right": {
-            "type": "call",
-            "func": {
-              "type": "var",
-              "value": "add"
+          right: {
+            type: 'call',
+            func: {
+              type: 'var',
+              value: 'add'
             },
-            "args": [
+            args: [
               {
-                "type": "var",
-                "value": "q2"
+                type: 'var',
+                value: 'q2'
               }
             ]
           }
         },
         {
-          "type": "memberExpression",
-          "operator": "->",
-          "left": {
-            "type": "memberExpression",
-            "operator": "->",
-            "left": {
-              "type": "var",
-              "value": "t"
+          type: 'memberExpression',
+          operator: '->',
+          left: {
+            type: 'memberExpression',
+            operator: '->',
+            left: {
+              type: 'var',
+              value: 't'
             },
-            "right": {
-              "type": "var",
-              "value": "questions"
+            right: {
+              type: 'var',
+              value: 'questions'
             }
           },
-          "right": {
-            "type": "call",
-            "func": {
-              "type": "var",
-              "value": "add"
+          right: {
+            type: 'call',
+            func: {
+              type: 'var',
+              value: 'add'
             },
-            "args": [
+            args: [
               {
-                "type": "var",
-                "value": "q3"
+                type: 'var',
+                value: 'q3'
               }
             ]
           }
         },
         {
-          "type": "memberExpression",
-          "operator": "->",
-          "left": {
-            "type": "memberExpression",
-            "operator": "->",
-            "left": {
-              "type": "var",
-              "value": "t"
+          type: 'memberExpression',
+          operator: '->',
+          left: {
+            type: 'memberExpression',
+            operator: '->',
+            left: {
+              type: 'var',
+              value: 't'
             },
-            "right": {
-              "type": "var",
-              "value": "questions"
+            right: {
+              type: 'var',
+              value: 'questions'
             }
           },
-          "right": {
-            "type": "call",
-            "func": {
-              "type": "var",
-              "value": "remove"
+          right: {
+            type: 'call',
+            func: {
+              type: 'var',
+              value: 'remove'
             },
-            "args": [
+            args: [
               {
-                "type": "var",
-                "value": "q3"
+                type: 'var',
+                value: 'q3'
               }
             ]
           }
         },
         {
-          "type": "ifStatement",
-          "cond": {
-            "type": "binaryExpression",
-            "operator": ">",
-            "left": {
-              "type": "memberExpression",
-              "operator": "->",
-              "left": {
-                "type": "memberExpression",
-                "operator": "->",
-                "left": {
-                  "type": "var",
-                  "value": "t"
+          type: 'ifStatement',
+          cond: {
+            type: 'binaryExpression',
+            operator: '>',
+            left: {
+              type: 'memberExpression',
+              operator: '->',
+              left: {
+                type: 'memberExpression',
+                operator: '->',
+                left: {
+                  type: 'var',
+                  value: 't'
                 },
-                "right": {
-                  "type": "var",
-                  "value": "questions"
+                right: {
+                  type: 'var',
+                  value: 'questions'
                 }
               },
-              "right": {
-                "type": "var",
-                "value": "amount"
+              right: {
+                type: 'var',
+                value: 'amount'
               }
             },
-            "right": {
-              "type": "num",
-              "value": 2
+            right: {
+              type: 'num',
+              value: 2
             }
           },
-          "then": {
-            "type": "call",
-            "func": {
-              "type": "var",
-              "value": "print"
+          then: {
+            type: 'call',
+            func: {
+              type: 'var',
+              value: 'print'
             },
-            "args": [
+            args: [
               {
-                "type": "str",
-                "value": "remove doesn't work"
+                type: 'str',
+                value: "remove doesn't work"
               }
             ]
           }
         },
         {
-          "type": "memberExpression",
-          "operator": "->",
-          "left": {
-            "type": "memberExpression",
-            "operator": "->",
-            "left": {
-              "type": "var",
-              "value": "t"
+          type: 'memberExpression',
+          operator: '->',
+          left: {
+            type: 'memberExpression',
+            operator: '->',
+            left: {
+              type: 'var',
+              value: 't'
             },
-            "right": {
-              "type": "var",
-              "value": "answers"
+            right: {
+              type: 'var',
+              value: 'answers'
             }
           },
-          "right": {
-            "type": "call",
-            "func": {
-              "type": "var",
-              "value": "add"
+          right: {
+            type: 'call',
+            func: {
+              type: 'var',
+              value: 'add'
             },
-            "args": [
+            args: [
               {
-                "type": "objLiteral",
-                "properties": [
+                type: 'objLiteral',
+                properties: [
                   {
-                    "type": "literalAssignExpression",
-                    "operator": ":",
-                    "left": {
-                      "type": "var",
-                      "value": "id"
+                    type: 'literalAssignExpression',
+                    operator: ':',
+                    left: {
+                      type: 'var',
+                      value: 'id'
                     },
-                    "right": {
-                      "type": "num",
-                      "value": 1
+                    right: {
+                      type: 'num',
+                      value: 1
                     }
                   },
                   {
-                    "type": "literalAssignExpression",
-                    "operator": ":",
-                    "left": {
-                      "type": "var",
-                      "value": "q1"
+                    type: 'literalAssignExpression',
+                    operator: ':',
+                    left: {
+                      type: 'var',
+                      value: 'q1'
                     },
-                    "right": {
-                      "type": "str",
-                      "value": "Vadim"
+                    right: {
+                      type: 'str',
+                      value: 'Vadim'
                     }
                   },
                   {
-                    "type": "literalAssignExpression",
-                    "operator": ":",
-                    "left": {
-                      "type": "var",
-                      "value": "q2"
+                    type: 'literalAssignExpression',
+                    operator: ':',
+                    left: {
+                      type: 'var',
+                      value: 'q2'
                     },
-                    "right": {
-                      "type": "str",
-                      "value": "21"
+                    right: {
+                      type: 'str',
+                      value: '21'
                     }
                   }
                 ]
@@ -725,64 +718,64 @@ describe('AST tests', function() {
           }
         },
         {
-          "type": "memberExpression",
-          "operator": "->",
-          "left": {
-            "type": "memberExpression",
-            "operator": "->",
-            "left": {
-              "type": "var",
-              "value": "t"
+          type: 'memberExpression',
+          operator: '->',
+          left: {
+            type: 'memberExpression',
+            operator: '->',
+            left: {
+              type: 'var',
+              value: 't'
             },
-            "right": {
-              "type": "var",
-              "value": "answers"
+            right: {
+              type: 'var',
+              value: 'answers'
             }
           },
-          "right": {
-            "type": "call",
-            "func": {
-              "type": "var",
-              "value": "add"
+          right: {
+            type: 'call',
+            func: {
+              type: 'var',
+              value: 'add'
             },
-            "args": [
+            args: [
               {
-                "type": "objLiteral",
-                "properties": [
+                type: 'objLiteral',
+                properties: [
                   {
-                    "type": "literalAssignExpression",
-                    "operator": ":",
-                    "left": {
-                      "type": "var",
-                      "value": "id"
+                    type: 'literalAssignExpression',
+                    operator: ':',
+                    left: {
+                      type: 'var',
+                      value: 'id'
                     },
-                    "right": {
-                      "type": "num",
-                      "value": 2
+                    right: {
+                      type: 'num',
+                      value: 2
                     }
                   },
                   {
-                    "type": "literalAssignExpression",
-                    "operator": ":",
-                    "left": {
-                      "type": "var",
-                      "value": "q1"
+                    type: 'literalAssignExpression',
+                    operator: ':',
+                    left: {
+                      type: 'var',
+                      value: 'q1'
                     },
-                    "right": {
-                      "type": "str",
-                      "value": "Max"
+                    right: {
+                      type: 'str',
+                      value: 'Max'
                     }
                   },
                   {
-                    "type": "literalAssignExpression",
-                    "operator": ":",
-                    "left": {
-                      "type": "var",
-                      "value": "q2"
+                    type: 'literalAssignExpression',
+                    operator: ':',
+                    left: {
+                      type: 'var',
+                      value: 'q2'
                     },
-                    "right": {
-                      "type": "str",
-                      "value": "25"
+                    right: {
+                      type: 'str',
+                      value: '25'
                     }
                   }
                 ]
@@ -791,88 +784,88 @@ describe('AST tests', function() {
           }
         },
         {
-          "type": "forEachStatement",
-          "inner": {
-            "type": "identifierExpression",
-            "operator": "as",
-            "left": {
-              "type": "memberExpression",
-              "operator": "->",
-              "left": {
-                "type": "var",
-                "value": "t"
+          type: 'forEachStatement',
+          inner: {
+            type: 'identifierExpression',
+            operator: 'as',
+            left: {
+              type: 'memberExpression',
+              operator: '->',
+              left: {
+                type: 'var',
+                value: 't'
               },
-              "right": {
-                "type": "var",
-                "value": "questions"
+              right: {
+                type: 'var',
+                value: 'questions'
               }
             },
-            "right": {
-              "type": "var",
-              "value": "q"
+            right: {
+              type: 'var',
+              value: 'q'
             }
           },
-          "body": {
-            "type": "call",
-            "func": {
-              "type": "var",
-              "value": "print"
+          body: {
+            type: 'call',
+            func: {
+              type: 'var',
+              value: 'print'
             },
-            "args": [
+            args: [
               {
-                "type": "memberExpression",
-                "operator": "->",
-                "left": {
-                  "type": "var",
-                  "value": "q"
+                type: 'memberExpression',
+                operator: '->',
+                left: {
+                  type: 'var',
+                  value: 'q'
                 },
-                "right": {
-                  "type": "var",
-                  "value": "description"
+                right: {
+                  type: 'var',
+                  value: 'description'
                 }
               }
             ]
           }
         },
         {
-          "type": "forEachStatement",
-          "inner": {
-            "type": "identifierExpression",
-            "operator": "as",
-            "left": {
-              "type": "memberExpression",
-              "operator": "->",
-              "left": {
-                "type": "var",
-                "value": "t"
+          type: 'forEachStatement',
+          inner: {
+            type: 'identifierExpression',
+            operator: 'as',
+            left: {
+              type: 'memberExpression',
+              operator: '->',
+              left: {
+                type: 'var',
+                value: 't'
               },
-              "right": {
-                "type": "var",
-                "value": "answers"
+              right: {
+                type: 'var',
+                value: 'answers'
               }
             },
-            "right": {
-              "type": "var",
-              "value": "a"
+            right: {
+              type: 'var',
+              value: 'a'
             }
           },
-          "body": {
-            "type": "call",
-            "func": {
-              "type": "var",
-              "value": "print"
+          body: {
+            type: 'call',
+            func: {
+              type: 'var',
+              value: 'print'
             },
-            "args": [
+            args: [
               {
-                "type": "memberExpression",
-                "operator": "->",
-                "left": {
-                  "type": "var",
-                  "value": "a"
+                type: 'memberExpression',
+                operator: '->',
+                left: {
+                  type: 'var',
+                  value: 'a'
                 },
-                "right": {
-                  "type": "var",
-                  "value": "some"
+                right: {
+                  type: 'var',
+                  value: 'some'
                 }
               }
             ]

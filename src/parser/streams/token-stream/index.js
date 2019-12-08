@@ -1,32 +1,24 @@
-// TokenStream function
-function TokenStream (input) {
+const {
+  keywords,
+  punctuationSymbols,
+  operationSymbols,
+  identifierSymbols,
+  whitespaceSymbols,
+} = require('../../../config')
+
+// is functions
+const isKeyword = (x) => keywords.includes(x)
+const isDigit = (ch) => /[\d]/i.test(ch)
+const isIdStart = (ch) => /[\w]/i.test(ch)
+const isId = (ch) => (isIdStart(ch) || identifierSymbols.includes(ch))
+const isOpChar = (ch) => operationSymbols.includes(ch)
+const isPunc = (ch) => punctuationSymbols.includes(ch)
+const isWhitespace = (ch) => whitespaceSymbols.includes(ch)
+
+const TokenStream = (input) => {
   let current = null
 
-  const keywords = [
-    'test', // type of var, consist of questions
-    'question', // type of var, part of test
-    'if', // cond statement
-    'else', // cond statement
-    'forEach', // loof
-    'as', // variable declaration inside forEach
-    'true', // bool value
-    'false' // bool value
-  ]
-
-  const isKeyword = (x) => keywords.includes(x)
-
-  const isDigit = (ch) => /[\d]/i.test(ch)
-
-  const isIdStart = (ch) => /[\w]/i.test(ch)
-
-  const isId = (ch) => (isIdStart(ch) || '0123456789'.includes(ch))
-
-  const isOpChar = (ch) => '+-*/%=:&|<>!'.includes(ch)
-
-  const isPunc = (ch) => ',;(){}[]'.includes(ch)
-
-  const isWhitespace = (ch) => ' \t\n'.includes(ch)
-
+  // read functions
   const readWhile = (predicate) => {
     let str = ''
     while (!input.eof() && predicate(input.peek())) {
@@ -37,7 +29,7 @@ function TokenStream (input) {
 
   const readNumber = () => {
     let hasDot = false
-    const number = readWhile(function (ch) {
+    const number = readWhile((ch) => {
       if (ch === '.') {
         if (hasDot) return false
         hasDot = true
@@ -80,15 +72,23 @@ function TokenStream (input) {
     return str
   }
 
-  const readString = () => {
-    return {
-      type: 'str',
-      value: readEscaped('"')
-    }
-  }
+  const readString = () => ({
+    type: 'str',
+    value: readEscaped('"')
+  })
+
+  const readPunc = () => ({
+    type: 'punc',
+    value: input.next()
+  })
+
+  const readOp = () => ({
+    type: 'op',
+    value: readWhile(isOpChar)
+  })
 
   const skipComment = () => {
-    readWhile(function (ch) { return ch !== '\n' })
+    readWhile((ch) => ch !== '\n')
     input.next()
   }
 
@@ -97,31 +97,17 @@ function TokenStream (input) {
     readWhile(isWhitespace)
     if (input.eof()) return null
     const ch = input.peek()
-    if (ch === '#') {
-      skipComment()
-      return readNext()
-    }
+
+    if (ch === '#') { skipComment(); return readNext() }
     if (ch === '"') return readString()
     if (isDigit(ch)) return readNumber()
     if (isIdStart(ch)) return readIdent()
-    if (isPunc(ch)) {
-      return {
-        type: 'punc',
-        value: input.next()
-      }
-    }
-    if (isOpChar(ch)) {
-      return {
-        type: 'op',
-        value: readWhile(isOpChar)
-      }
-    }
+    if (isPunc(ch)) return readPunc()
+    if (isOpChar(ch)) return readOp()
     input.croak(`Can't handle character: ${ch}`)
   }
 
-  const peek = () => {
-    return current || (current = readNext())
-  }
+  const peek = () => (current || (current = readNext()))
 
   const next = () => {
     const tok = current
@@ -131,11 +117,13 @@ function TokenStream (input) {
 
   const eof = () => (peek() == null)
 
+  const croak = input.croak
+
   return {
-    next: next,
-    peek: peek,
-    eof: eof,
-    croak: input.croak
+    next,
+    peek,
+    eof,
+    croak
   }
 }
 
