@@ -1,64 +1,64 @@
-function parse(input) {
+function parse (input) {
   const PRECEDENCE = {
-    '=': 1,    // assign
-    ':': 1,    // assign for props inside literals
-    '||': 2,   // bool or
-    '&&': 3,   // bool and
-    '<': 4,    // les
-    '>': 4,    // more
-    '<=': 4,   // les or equal
-    '>=': 4,   // more or equal
-    '==': 4,   // equal
-    '!=': 4,   // not equal
-    '+': 5,    // plus
-    '-': 5,    // minus
-    '*': 6,    // multiple
-    '/': 6,    // divide
-    '%': 6,    // remaining from dividing
-    '->': 7,   // access to props
-    'as': 7,   // forEach var identifier
+    '=': 1, // assign
+    ':': 1, // assign for props inside literals
+    '||': 2, // bool or
+    '&&': 3, // bool and
+    '<': 4, // les
+    '>': 4, // more
+    '<=': 4, // les or equal
+    '>=': 4, // more or equal
+    '==': 4, // equal
+    '!=': 4, // not equal
+    '+': 5, // plus
+    '-': 5, // minus
+    '*': 6, // multiple
+    '/': 6, // divide
+    '%': 6, // remaining from dividing
+    '->': 7, // access to props
+    as: 7 // forEach var identifier
   }
 
   return parseTopLevel()
 
-  function isPunc(ch) {
+  function isPunc (ch) {
     const tok = input.peek()
     return (tok && (tok.type === 'punc') && (!ch || tok.value === ch))
   }
 
-  function isKw(kw) {
+  function isKw (kw) {
     const tok = input.peek()
     return (tok && (tok.type === 'kw') && (!kw || tok.value === kw))
   }
 
-  function isOp(op) {
+  function isOp (op) {
     const tok = input.peek()
     console.log('op tok', tok)
     return (tok && (tok.type === 'op') && (!op || tok.value === op))
   }
 
-  function skipPunc(ch) {
+  function skipPunc (ch) {
     if (isPunc(ch)) input.next()
     // else input.croak("Expecting punctuation: \"" + ch + "\"")
   }
 
-  function skipKw(kw) {
+  function skipKw (kw) {
     if (isKw(kw)) input.next()
-    else input.croak("Expecting keyword: \"" + kw + "\"")
+    else input.croak('Expecting keyword: "' + kw + '"')
   }
 
-  function unexpected() {
-    input.croak("Unexpected token: " + JSON.stringify(input.peek()))
+  function unexpected () {
+    input.croak('Unexpected token: ' + JSON.stringify(input.peek()))
   }
 
-  function maybeBinary(left, myPrec) {
+  function maybeBinary (left, myPrec) {
     const tok = input.peek()
     if (tok) {
       const hisPrec = PRECEDENCE[tok.value]
       if (hisPrec > myPrec) {
         input.next()
         let type
-        switch(tok.value) {
+        switch (tok.value) {
           case '=': {
             type = 'assignExpression'
             break
@@ -91,7 +91,7 @@ function parse(input) {
     return left
   }
 
-  function delimited(start, stop, separator, parser) {
+  function delimited (start, stop, separator, parser) {
     const a = []
     let first = true
     skipPunc(start)
@@ -109,15 +109,15 @@ function parse(input) {
     return a
   }
 
-  function parseCall(func) {
+  function parseCall (func) {
     return {
       type: 'call',
       func,
-      args: delimited('(', ')', ',', parseExpression),
+      args: delimited('(', ')', ',', parseExpression)
     }
   }
 
-  function parseVarTestName() {
+  function parseVarTestName () {
     skipKw('test')
     const name = input.next()
     return {
@@ -126,7 +126,7 @@ function parse(input) {
     }
   }
 
-  function parseVarQuestionName() {
+  function parseVarQuestionName () {
     skipKw('question')
     const name = input.next()
     return {
@@ -135,7 +135,7 @@ function parse(input) {
     }
   }
 
-  function parseIf() {
+  function parseIf () {
     skipKw('if')
     const cond = parseExpression()
     if (!isPunc('{')) skipKw('then')
@@ -143,7 +143,7 @@ function parse(input) {
     const ret = {
       type: 'ifStatement',
       cond,
-      then,
+      then
     }
     if (isKw('else')) {
       input.next()
@@ -152,19 +152,19 @@ function parse(input) {
     return ret
   }
 
-  function parseForEach() {
+  function parseForEach () {
     skipKw('forEach')
     const inner = parseExpression()
     const body = parseExpression()
     const ret = {
       type: 'forEachStatement',
       inner,
-      body,
+      body
     }
     return ret
   }
 
-  function parseBool() {
+  function parseBool () {
     return {
       type: 'bool',
       value: (input.next().value === 'true')
@@ -172,11 +172,11 @@ function parse(input) {
   }
 
   // check does it a function call
-  function maybeCall(expr) {
+  function maybeCall (expr) {
     return isPunc('(') ? parseCall(expr) : expr
   }
 
-  function parseAtom() {
+  function parseAtom () {
     const expr = (() => {
       if (isPunc('(')) {
         input.next()
@@ -206,7 +206,7 @@ function parse(input) {
     return maybeCall(expr)
   }
 
-  function parseTopLevel() {
+  function parseTopLevel () {
     const prog = []
     while (!input.eof()) {
       prog.push(parseExpression())
@@ -217,16 +217,16 @@ function parse(input) {
 
     return {
       type: 'prog',
-      prog,
+      prog
     }
   }
 
-  function parseProg() {
+  function parseProg () {
     const prog = delimited('{', '}', ';', parseExpression)
     if (prog.length === 0) {
       return {
         type: 'bool',
-        value: false,
+        value: false
       }
     }
     if (prog.length === 1) {
@@ -239,19 +239,19 @@ function parse(input) {
     }
   }
 
-  function parseObjLiteral() {
+  function parseObjLiteral () {
     const properties = delimited('[', ']', ',', parseExpression)
     return {
       type: 'objLiteral',
-      properties,
+      properties
     }
   }
 
-  function parseExpression() {
+  function parseExpression () {
     return maybeCall(maybeBinary(parseAtom(), 0))
   }
 }
 
 module.exports = {
-  parse,
+  parse
 }

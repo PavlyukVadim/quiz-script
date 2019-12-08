@@ -1,6 +1,6 @@
-function InputStream(input) {
-  let pos = 0, line = 1, col = 0
-  
+function InputStream (input) {
+  let pos = 0; let line = 1; let col = 0
+
   const next = () => {
     const ch = input.charAt(pos++)
     if (ch === '\n') {
@@ -24,7 +24,7 @@ function InputStream(input) {
     next,
     peek,
     eof,
-    croak,
+    croak
   }
 }
 

@@ -1,16 +1,16 @@
 // TokenStream function
-function TokenStream(input) {
+function TokenStream (input) {
   let current = null
-  
+
   const keywords = [
-    'test',     // type of var, consist of questions
+    'test', // type of var, consist of questions
     'question', // type of var, part of test
-    'if',       // cond statement
-    'else',     // cond statement
-    'forEach',  // loof
-    'as',       // variable declaration inside forEach
-    'true',     // bool value
-    'false',    // bool value
+    'if', // cond statement
+    'else', // cond statement
+    'forEach', // loof
+    'as', // variable declaration inside forEach
+    'true', // bool value
+    'false' // bool value
   ]
 
   const isKeyword = (x) => keywords.includes(x)
@@ -20,7 +20,7 @@ function TokenStream(input) {
   const isIdStart = (ch) => /[\w]/i.test(ch)
 
   const isId = (ch) => (isIdStart(ch) || '0123456789'.includes(ch))
-  
+
   const isOpChar = (ch) => '+-*/%=:&|<>!'.includes(ch)
 
   const isPunc = (ch) => ',;(){}[]'.includes(ch)
@@ -37,7 +37,7 @@ function TokenStream(input) {
 
   const readNumber = () => {
     let hasDot = false
-    const number = readWhile(function(ch) {
+    const number = readWhile(function (ch) {
       if (ch === '.') {
         if (hasDot) return false
         hasDot = true
@@ -48,7 +48,7 @@ function TokenStream(input) {
 
     return {
       type: 'num',
-      value: parseFloat(number),
+      value: parseFloat(number)
     }
   }
 
@@ -57,21 +57,21 @@ function TokenStream(input) {
 
     return {
       type: isKeyword(id) ? 'kw' : 'var',
-      value: id,
+      value: id
     }
   }
 
   const readEscaped = (end) => {
-    let escaped = false, str = ''
+    let escaped = false; let str = ''
     input.next()
     while (!input.eof()) {
-      let ch = input.next()
+      const ch = input.next()
       if (escaped) {
         str += ch
         escaped = false
-      } else if (ch == "\\") {
+      } else if (ch === '\\') {
         escaped = true
-      } else if (ch == end) {
+      } else if (ch === end) {
         break
       } else {
         str += ch
@@ -83,12 +83,12 @@ function TokenStream(input) {
   const readString = () => {
     return {
       type: 'str',
-      value: readEscaped('"'),
+      value: readEscaped('"')
     }
   }
 
   const skipComment = () => {
-    readWhile(function(ch) { return ch !== '\n' })
+    readWhile(function (ch) { return ch !== '\n' })
     input.next()
   }
 
@@ -104,13 +104,17 @@ function TokenStream(input) {
     if (ch === '"') return readString()
     if (isDigit(ch)) return readNumber()
     if (isIdStart(ch)) return readIdent()
-    if (isPunc(ch)) return {
-      type: 'punc',
-      value: input.next()
+    if (isPunc(ch)) {
+      return {
+        type: 'punc',
+        value: input.next()
+      }
     }
-    if (isOpChar(ch)) return {
-      type: 'op',
-      value: readWhile(isOpChar)
+    if (isOpChar(ch)) {
+      return {
+        type: 'op',
+        value: readWhile(isOpChar)
+      }
     }
     input.croak(`Can't handle character: ${ch}`)
   }
@@ -120,13 +124,13 @@ function TokenStream(input) {
   }
 
   const next = () => {
-    let tok = current
+    const tok = current
     current = null
     return tok || readNext()
   }
 
   const eof = () => (peek() == null)
-  
+
   return {
     next: next,
     peek: peek,

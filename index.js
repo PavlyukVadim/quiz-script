@@ -3,8 +3,6 @@ const TokenStream = require('./src/parser/tokenStream')
 const { parse } = require('./src/parser/index')
 const { Environment, evaluate } = require('./src/eval')
 
-console.log('here')
-
 const outputAstToConsole = (ast, code) => {
   console.log('Code sample:\n', code)
   console.log('AST:\n', ast)
@@ -61,7 +59,7 @@ const testMembersExprCode = `
 const globalEnv = new Environment()
 
 const astOfTestMembersExprCode = parse(TokenStream(InputStream(testMembersExprCode)))
-// outputAstToConsole(astOfTestMembersExprCode, testMembersExprCode)
+outputAstToConsole(astOfTestMembersExprCode, testMembersExprCode)
 evaluate(astOfTestMembersExprCode, globalEnv)
 outputEnv(globalEnv)
 console.log('globalEnv', globalEnv)
