@@ -17,6 +17,11 @@ const parse = (input) => {
     return (tok && (tok.type === 'kw') && (!kw || tok.value === kw))
   }
 
+  const isObjectType = (type) => {
+    const objTypes = ['var', 'num', 'str']
+    return objTypes.includes(type)
+  }
+
   const skipPunc = (ch) => {
     if (isPunc(ch)) input.next()
     else if (strictPuncMode) input.croak(`Expecting punctuation: "${ch}"`)
@@ -120,39 +125,6 @@ const parse = (input) => {
     return { type: 'bool', value }
   }
 
-  // check does it a function call
-  const maybeCall = (expr) => isPunc('(') ? parseCall(expr) : expr
-
-  const parseAtom = () => {
-    const expr = (() => {
-      if (isPunc('(')) {
-        input.next()
-        const exp = parseExpression()
-        skipPunc(')')
-        return exp
-      }
-      if (isPunc('{')) return parseProg()
-      if (isPunc('[')) return parseObjLiteral()
-      if (isKw('if')) return parseIf()
-      if (isKw('forEach')) return parseForEach()
-      if (isKw('true') || isKw('false')) return parseBool()
-      if (isKw('test')) return parseVarTestName()
-      if (isKw('question')) return parseVarQuestionName()
-
-      const tok = input.next()
-      if (
-        (tok.type === 'var') ||
-        (tok.type === 'num') ||
-        (tok.type === 'str')
-      ) {
-        return tok
-      }
-      unexpected()
-    })()
-
-    return maybeCall(expr)
-  }
-
   const parseTopLevel = () => {
     const prog = []
     while (!input.eof()) {
@@ -174,6 +146,34 @@ const parse = (input) => {
     return { type: ET.objLiteral, properties }
   }
 
+  const parseWrappedExpression = () => {
+    input.next()
+    const exp = parseExpression()
+    skipPunc(')')
+    return exp
+  }
+
+  // check does it a function call
+  const maybeCall = (expr) => isPunc('(') ? parseCall(expr) : expr
+
+  const exprGetter = () => {
+    if (isPunc('(')) return parseWrappedExpression()
+    if (isPunc('{')) return parseProg()
+    if (isPunc('[')) return parseObjLiteral()
+    if (isKw('if')) return parseIf()
+    if (isKw('forEach')) return parseForEach()
+    if (isKw('true') || isKw('false')) return parseBool()
+    if (isKw('test')) return parseVarTestName()
+    if (isKw('question')) return parseVarQuestionName()
+
+    const tok = input.next()
+    if (isObjectType(tok.type)) return tok
+
+    unexpected()
+    return null
+  }
+
+  const parseAtom = compose(maybeCall, exprGetter)
   const parseExpression = compose(maybeCall, maybeBinary, parseAtom)
 
   return parseTopLevel()
