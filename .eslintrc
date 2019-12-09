@@ -5,6 +5,9 @@
   "extends": "standard",
   "rules": {
     "no-unused-vars": "off",
-    "no-return-assign": "off"
+    "no-return-assign": "off",
+    "quote-props": "off",
+    "no-multi-spaces": "off",
+    "comma-dangle": "off"
 	}
 }
