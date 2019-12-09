@@ -1,6 +1,5 @@
 const chai = require('chai')
-const { InputStream, TokenStream } = require('../src/parser/streams')
-const { parse } = require('../src/parser/index')
+const astBuilder = require('../src/ast')
 const Environment = require('../src/eval/environment')
 const evaluate = require('../src/eval')
 
@@ -33,7 +32,7 @@ describe('Evaluation', function () {
       }
     }
 
-    const astOfTestVariableAssignCode = parse(TokenStream(InputStream(testVariableAssignCode)))
+    const astOfTestVariableAssignCode = astBuilder(testVariableAssignCode)
     evaluate(astOfTestVariableAssignCode, globalEnv)
 
     chai.expect(JSON.stringify(globalEnv))
@@ -54,7 +53,7 @@ describe('Evaluation', function () {
       }
     }
 
-    const astOfQuestionVariableAssignCode = parse(TokenStream(InputStream(questionVariableAssignCode)))
+    const astOfQuestionVariableAssignCode = astBuilder(questionVariableAssignCode)
     evaluate(astOfQuestionVariableAssignCode, globalEnv)
 
     chai.expect(globalEnv)
@@ -145,7 +144,7 @@ describe('Evaluation', function () {
       q3: {}
     }
 
-    const astOfFullCodeSampleCode = parse(TokenStream(InputStream(fullCodeSample)))
+    const astOfFullCodeSampleCode = astBuilder(fullCodeSample)
     evaluate(astOfFullCodeSampleCode, globalEnv)
 
     chai.expect(JSON.stringify(globalEnv))

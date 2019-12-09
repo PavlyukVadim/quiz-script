@@ -1,5 +1,4 @@
-const { InputStream, TokenStream } = require('./src/parser/streams')
-const { parse } = require('./src/parser/index')
+const astBuilder = require('./src/ast')
 const Environment = require('./src/eval/environment')
 const evaluate = require('./src/eval')
 const { outputAstToConsole, outputEnv } = require('./utils/output')
@@ -49,7 +48,7 @@ const testMembersExprCode = `
 
 const globalEnv = new Environment()
 
-const astOfTestMembersExprCode = parse(TokenStream(InputStream(testMembersExprCode)))
+const astOfTestMembersExprCode = astBuilder(testMembersExprCode)
 // outputAstToConsole(astOfTestMembersExprCode, testMembersExprCode)
 evaluate(astOfTestMembersExprCode, globalEnv)
 // outputEnv(globalEnv)

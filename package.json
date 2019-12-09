@@ -8,7 +8,7 @@
   },
   "scripts": {
     "test": "npm run lint && mocha",
-    "lint": "eslint ./ --fix"
+    "lint": "eslint ./"
   },
   "repository": {
     "type": "git",

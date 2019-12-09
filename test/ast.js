@@ -1,9 +1,5 @@
 const chai = require('chai')
-const { InputStream, TokenStream } = require('../src/parser/streams')
-const { parse } = require('../src/parser/index')
-
-// import parse from './src/parser/index'
-// import Environment, { evaluate } from './src/eval'
+const astBuilder = require('../src/ast')
 
 describe('AST tests', function () {
   it('testVariableAssignCode', function () {
@@ -44,7 +40,7 @@ describe('AST tests', function () {
       ]
     }
 
-    const astOfTestVariableAssignCode = parse(TokenStream(InputStream(testVariableAssignCode)))
+    const astOfTestVariableAssignCode = astBuilder(testVariableAssignCode)
 
     chai.expect(astOfTestVariableAssignCode)
       .to.deep.equal(expectedResult)
@@ -88,7 +84,7 @@ describe('AST tests', function () {
       ]
     }
 
-    const astOfQuestionVariableAssignCode = parse(TokenStream(InputStream(questionVariableAssignCode)))
+    const astOfQuestionVariableAssignCode = astBuilder(questionVariableAssignCode)
 
     chai.expect(astOfQuestionVariableAssignCode)
       .to.deep.equal(expectedResult)
@@ -134,7 +130,7 @@ describe('AST tests', function () {
       ]
     }
 
-    const astOfTestMembersExprCode = parse(TokenStream(InputStream(testMembersExprCode)))
+    const astOfTestMembersExprCode = astBuilder(testMembersExprCode)
 
     chai.expect(astOfTestMembersExprCode)
       .to.deep.equal(expectedResult)
@@ -221,7 +217,7 @@ describe('AST tests', function () {
       ]
     }
 
-    const astOfTestMembersWithLiteralExprCode = parse(TokenStream(InputStream(testMembersWithLiteralExprCode)))
+    const astOfTestMembersWithLiteralExprCode = astBuilder(testMembersWithLiteralExprCode)
 
     chai.expect(astOfTestMembersWithLiteralExprCode)
       .to.deep.equal(expectedResult)
@@ -284,7 +280,7 @@ describe('AST tests', function () {
       ]
     }
 
-    const astOfCondStatementSampleCode = parse(TokenStream(InputStream(condStatementSampleCode)))
+    const astOfCondStatementSampleCode = astBuilder(condStatementSampleCode)
 
     chai.expect(astOfCondStatementSampleCode)
       .to.deep.equal(expectedResult)
@@ -347,7 +343,7 @@ describe('AST tests', function () {
       ]
     }
 
-    const astOfForEachSampleCode = parse(TokenStream(InputStream(forEachSampleCode)))
+    const astOfForEachSampleCode = astBuilder(forEachSampleCode)
 
     chai.expect(astOfForEachSampleCode)
       .to.deep.equal(expectedResult)
@@ -874,7 +870,7 @@ describe('AST tests', function () {
       ]
     }
 
-    const astOfFullSampleCode = parse(TokenStream(InputStream(fullCodeSample)))
+    const astOfFullSampleCode = astBuilder(fullCodeSample)
 
     chai.expect(astOfFullSampleCode)
       .to.deep.equal(expectedResult)
