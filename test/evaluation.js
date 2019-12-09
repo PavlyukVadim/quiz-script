@@ -1,10 +1,16 @@
-describe('Evaluation', function() {
+const chai = require('chai')
+const { InputStream, TokenStream } = require('../src/parser/streams')
+const { parse } = require('../src/parser/index')
+const Environment = require('../src/eval/environment')
+const evaluate = require('../src/eval')
+
+describe('Evaluation', function () {
   let globalEnv
   beforeEach(() => {
     globalEnv = new Environment()
   })
 
-  it('testVariableAssignCode', function() {
+  it('testVariableAssignCode', function () {
     const testVariableAssignCode = `
       test t = [
         title: "My first test",
@@ -12,19 +18,19 @@ describe('Evaluation', function() {
     `
 
     const expectedResult = {
-      "vars": {
-        "t": {
-          "title": "My first test",
-          "questions": {
-            "items": [],
-            "amount": 0
+      vars: {
+        t: {
+          title: 'My first test',
+          questions: {
+            items: [],
+            amount: 0
           },
-          "answers": {
-            "items": [],
-            "amount": 0
+          answers: {
+            items: [],
+            amount: 0
           }
         }
-      },
+      }
     }
 
     const astOfTestVariableAssignCode = parse(TokenStream(InputStream(testVariableAssignCode)))
@@ -34,8 +40,7 @@ describe('Evaluation', function() {
       .to.equal(JSON.stringify(expectedResult))
   })
 
-
-  it('questionVariableAssignCode', function() {
+  it('questionVariableAssignCode', function () {
     const questionVariableAssignCode = `
       question q1 = [
         description: "What's your name",
@@ -45,17 +50,16 @@ describe('Evaluation', function() {
     const expectedResult = new Environment()
     expectedResult.vars = {
       q1: {
-        description: 'What\'s your name',
+        description: 'What\'s your name'
       }
     }
-  
+
     const astOfQuestionVariableAssignCode = parse(TokenStream(InputStream(questionVariableAssignCode)))
     evaluate(astOfQuestionVariableAssignCode, globalEnv)
 
     chai.expect(globalEnv)
       .to.deep.equal(expectedResult)
   })
-
 
   it('fullCodeSample', function () {
     const fullCodeSample = `
@@ -103,44 +107,44 @@ describe('Evaluation', function() {
 
     const expectedResult = new Environment()
     expectedResult.vars = {
-      "t": {
-        "title": "My first test",
-        "questions": {
-          "items": [
+      t: {
+        title: 'My first test',
+        questions: {
+          items: [
             {
-              "description": "What's your name?"
+              description: "What's your name?"
             },
             {
-              "description": "How old are you?"
+              description: 'How old are you?'
             }
           ],
-          "amount": 2
+          amount: 2
         },
-        "answers": {
-          "items": [
+        answers: {
+          items: [
             {
-              "id": 1,
-              "q1": "Vadim",
-              "q2": "21"
+              id: 1,
+              q1: 'Vadim',
+              q2: '21'
             },
             {
-              "id": 2,
-              "q1": "Max",
-              "q2": "25"
+              id: 2,
+              q1: 'Max',
+              q2: '25'
             }
           ],
-          "amount": 2
+          amount: 2
         }
       },
-      "q1": {
-        "description": "What's your name?"
+      q1: {
+        description: "What's your name?"
       },
-      "q2": {
-        "description": "How old are you?"
+      q2: {
+        description: 'How old are you?'
       },
-      "q3": {}
+      q3: {}
     }
-  
+
     const astOfFullCodeSampleCode = parse(TokenStream(InputStream(fullCodeSample)))
     evaluate(astOfFullCodeSampleCode, globalEnv)
 

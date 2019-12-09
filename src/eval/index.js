@@ -1,88 +1,17 @@
-const globalVars = {
-  print: console.log,
-}
+const Environment = require('./environment')
 
-class Environment {
-  constructor(parent) {
-    this.vars = Object.create(parent ? parent.vars : null)
-    if (parent) {
-      this.parent = parent
-    }
-  }
-
-  lookup(name) {
-    let scope = this
-    while (scope) {
-      if (Object.prototype.hasOwnProperty.call(scope.vars, name)) {
-        return scope
-      }
-      scope = scope.parent
-    }
-  }
-
-  getVarValue(name) {
-    if (name in this.vars) {
-      return this.vars[name]
-      // TODO: refactor
-    } else if (this.parent && name in this.parent.vars) {
-      return this.parent.vars[name]
-    } else if (name in globalVars) {
-      return globalVars[name]
-    }
-    throw new Error('Undefined variable ' + name)
-  }
-
-  setVarValue(name, value) {
-    const scope = this.lookup(name)
-    if (!scope && this.parent) {
-      throw new Error('Undefined variable ' + name)
-    }
-    return (scope || this).vars[name] = value
-  }
-}
-
-Environment.prototype = {
-  lookup: function(name) {
-    let scope = this
-    while (scope) {
-      if (Object.prototype.hasOwnProperty.call(scope.vars, name)) {
-        return scope
-      }
-      scope = scope.parent
-    }
-  },
-  getVarValue: function(name) {
-    if (name in this.vars) {
-      return this.vars[name]
-      // TODO: refactor
-    } else if (this.parent && name in this.parent.vars) {
-      return this.parent.vars[name]
-    } else if (name in globalVars) {
-      return globalVars[name]
-    }
-    throw new Error("Undefined variable " + name)
-  },
-  setVarValue: function(name, value) {
-    const scope = this.lookup(name)
-    if (!scope && this.parent) {
-      throw new Error("Undefined variable " + name)
-    }
-    return (scope || this).vars[name] = value
-  },
-}
-
-  // name  // key                             // identifier
+// name  // key                             // identifier
 const expTypes = {
-  assign: 'assignExpression',                 // =
-  objLiteral: 'objLiteral',                   // []
-  literalAssign: 'literalAssignExpression',   // : inside objLiteral
-  member: 'memberExpression',                 // ->
-  cond: 'ifStatement',                        // if
-  binary: 'binaryExpression',                 // +, -, /, *, >, <
-  loop: 'forEachStatement',                   // forEach,
-  loopVar: 'identifierExpression',            // as
-  prog: 'prog',                               // { ... }
-  func: 'call',                               // ()
+  assign: 'assignExpression', // =
+  objLiteral: 'objLiteral', // []
+  literalAssign: 'literalAssignExpression', // : inside objLiteral
+  member: 'memberExpression', // ->
+  cond: 'ifStatement', // if
+  binary: 'binaryExpression', // +, -, /, *, >, <
+  loop: 'forEachStatement', // forEach,
+  loopVar: 'identifierExpression', // as
+  prog: 'prog', // { ... }
+  func: 'call' // ()
 }
 
 const varTypes = [
@@ -91,7 +20,7 @@ const varTypes = [
   'var' // member var for objLiteral
 ]
 
-function evaluate(exp, env) {
+const evaluate = (exp, env) => {
   switch (exp.type) {
     case 'num':
     case 'str':
@@ -137,7 +66,7 @@ function evaluate(exp, env) {
       // get all members values of the literal
       const parent = evaluate(exp.left, env)
       innerEnv.vars = {
-        ...parent,
+        ...parent
       }
       // call child on a inner env
       const child = evaluate(exp.right, innerEnv)
@@ -169,7 +98,7 @@ function evaluate(exp, env) {
         // create a inner env that includes current scope as parent
         const innerEnv = new Environment(env)
         innerEnv.vars = {
-          [varName]: varValue,
+          [varName]: varValue
         }
         const result = evaluate(exp.body, innerEnv)
       })
@@ -204,7 +133,7 @@ function evaluate(exp, env) {
   }
 }
 
-function applyOp(op, a, b) {
+function applyOp (op, a, b) {
   const num = (x) => {
     if (typeof x !== 'number') {
       throw new Error('Expected number but got ' + x)
@@ -230,7 +159,7 @@ function applyOp(op, a, b) {
   throw new Error('Can\'t apply operator ' + op)
 }
 
-function testFactory(test) {
+function testFactory (test) {
   const props = ['questions', 'answers']
   props.forEach((prop) => {
     test[prop] = {
@@ -243,10 +172,12 @@ function testFactory(test) {
           item.description !== wasteItem.description
         ))
       },
-      get amount() {
+      get amount () {
         return test[prop].items.length
       }
     }
   })
   return test
 }
+
+module.exports = evaluate
