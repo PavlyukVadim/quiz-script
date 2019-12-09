@@ -1,18 +1,5 @@
 const Environment = require('./environment')
-
-// name  // key                             // identifier
-const expTypes = {
-  assign: 'assignExpression', // =
-  objLiteral: 'objLiteral', // []
-  literalAssign: 'literalAssignExpression', // : inside objLiteral
-  member: 'memberExpression', // ->
-  cond: 'ifStatement', // if
-  binary: 'binaryExpression', // +, -, /, *, >, <
-  loop: 'forEachStatement', // forEach,
-  loopVar: 'identifierExpression', // as
-  prog: 'prog', // { ... }
-  func: 'call' // ()
-}
+const { expressionTypes: ET } = require('../config')
 
 const varTypes = [
   'testVar',
@@ -28,7 +15,7 @@ const evaluate = (exp, env) => {
     case 'var': return env.getVarValue(exp.value)
     case 'testVar': return env.getVarValue(exp.name)
 
-    case expTypes.assign: {
+    case ET.assign: {
       if (!varTypes.includes(exp.left.type)) {
         throw new Error('Cannot assign to ' + JSON.stringify(exp.left))
       }
@@ -41,7 +28,7 @@ const evaluate = (exp, env) => {
       return env.setVarValue(varName, value)
     }
 
-    case expTypes.objLiteral: {
+    case ET.objLiteral: {
       const innerValues = {}
       exp.properties.forEach((literalAssignExp) => {
         const [key, value] = evaluate(literalAssignExp, env)
@@ -50,7 +37,7 @@ const evaluate = (exp, env) => {
       return innerValues
     }
 
-    case expTypes.literalAssign: {
+    case ET.literalAssign: {
       if (!exp.left || !varTypes.includes(exp.left.type)) {
         throw new Error('Cannot assign to ' + JSON.stringify(exp.left))
       }
@@ -60,7 +47,7 @@ const evaluate = (exp, env) => {
       return [key, value]
     }
 
-    case expTypes.member: {
+    case ET.member: {
       // create a inner env that includes current scope as parent
       const innerEnv = new Environment(env)
       // get all members values of the literal
@@ -73,7 +60,7 @@ const evaluate = (exp, env) => {
       return child
     }
 
-    case expTypes.binary: {
+    case ET.binary: {
       return applyOp(
         exp.operator,
         evaluate(exp.left, env),
@@ -81,7 +68,7 @@ const evaluate = (exp, env) => {
       )
     }
 
-    case expTypes.cond: {
+    case ET.cond: {
       const cond = evaluate(exp.cond, env)
       if (cond) {
         return evaluate(exp.then, env)
@@ -92,7 +79,7 @@ const evaluate = (exp, env) => {
       }
     }
 
-    case expTypes.loop: {
+    case ET.loop: {
       const [varName, varValues] = evaluate(exp.inner, env)
       varValues.forEach((varValue) => {
         // create a inner env that includes current scope as parent
@@ -105,13 +92,13 @@ const evaluate = (exp, env) => {
       return
     }
 
-    case expTypes.loopVar: {
+    case ET.loopVar: {
       const value = evaluate(exp.left, env)
       const varName = exp.right.value
       return [varName, value]
     }
 
-    case expTypes.prog: {
+    case ET.prog: {
       let val = false
       exp.prog.forEach((exp) => {
         val = evaluate(exp, env)
@@ -119,7 +106,7 @@ const evaluate = (exp, env) => {
       return val
     }
 
-    case expTypes.func: {
+    case ET.func: {
       const func = evaluate(exp.func, env)
       return func.apply(null, exp.args.map((arg) => {
         return evaluate(arg, env)
